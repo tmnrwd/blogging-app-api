@@ -41,7 +41,7 @@ app.post('/auth', async (req, res) => {
 })
 
 app.post('/auth', async (req, res) => {
-    //console.log("triggered authenticate. username:", req.body.username, "password:", req.body.password, "header:", req.headers['authorization'])
+    console.log("triggered authenticate. username:", req.body.username, "password:", req.body.password, "header:", req.headers['authorization'])
     const userSearch = await User.findOne({username: req.body.username})
     if (!userSearch) {
         console.log("user not found")
@@ -73,8 +73,8 @@ testUser.save()
 
 app.listen(port, () => 
 console.log(`Example app listening at http://localhost:${port}`))
-//listening to the port for the thing we sent (I think)
-//mongoose.connect('mongodb://localhost/eventlist')
+
+//mongoose.connect('mongodb://localhost/postlist')
 mongoose.connect('mongodb+srv://bob:turnip@cluster0.fsbwp.mongodb.net/postlist?retryWrites=true&w=majority')
 
 var db = mongoose.connection

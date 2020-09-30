@@ -14,12 +14,16 @@ Post.find()
       res.send(posts))
   }
 
-exports.create = function (req, res, next) {   //create operation
+exports.create = function (req, res, next) {  
     if(!req.body.title) {
         return(next(createError(400, "title is required")))
-        //if there's no body, run createError and present a 400 error with this string
+
     }
-    const post = new Post({ title: req.body.title, tags: req.body.tags, text: req.body.text, date: req.body.date})
+    let stringTags = req.body.tags.valueOf();
+    let tagsArray = stringTags.split(",");
+    let date = new Date();
+    date = date.toLocaleDateString();
+    const post = new Post({ title: req.body.title, tags: tagsArray, text: req.body.text, date: date})
     post.save()
     .then(() => res.send({ result: true })
     )
@@ -29,9 +33,9 @@ exports.show = function (req, res, next) {
     Post.findOne({ _id: ObjectId(req.params.id)})
     .then((post) => {
         if(!post) {
-            return(next(createError(404, "no post with that id")))          //display error if no such todo exists
+            return(next(createError(404, "no post with that id")))      
         }
-        res.send(post)                                                  //send the assigned todo
+        res.send(post)                           
     })
 };
 
@@ -39,7 +43,7 @@ exports.update = function (req, res, next) {
     Post.findOne({ _id: ObjectId(req.params.id)})
     .then((post) => {
         if(!post) {
-            return(next(createError(404, "no post with that id")))          //display error if no such todo exists
+            return(next(createError(404, "no post with that id")))         
         }
         if (req.body.title){post.title = req.body.title};
         if (req.body.tags){post.tags = req.body.tags};
@@ -48,28 +52,6 @@ exports.update = function (req, res, next) {
         post.save().then(() => res.send({ result: true }))
     })
 };
-
-
-/*
-//here is a different variety of update function:
-exports.update = async function (req, res, next) {
-
-    if (!req.body.title) {
-        return (next(createError(400, "title is required")))
-    }
-
-    try {
-        const r = await (await listPromise).updateOne({ _id: ObjectId(req.params.id) },{ $set: { title: req.body.title, tags: req.body.tags, text: req.body.tags, date: req.body.date }})
-
-        if (r.matchedCount) {
-            return res.send({ result: true})
-        }
-        return (next(createError(404, "no post with that id")))    
-    } catch (e) {
-        next(e)
-    }
-}
-*/
 
 exports.delete = function (req, res, next) {
     Post.deleteOne({ _id: ObjectId(req.params.id) })
